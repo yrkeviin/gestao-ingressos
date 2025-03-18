@@ -59,5 +59,21 @@ const deleteIngresso = async (req, res) => {
     }
 };
 
+const createVenda = async (req, res) => {
+    try {
+        const { id, quantidade_requerida } = req.body;
+        const newVenda = await ingressoModel.createVenda(id, quantidade_requerida);
+        if (newVenda.error) {
+            return res.status(400).json({ message: newVenda.error });
+        }
+        res.status(201).json(newVenda);
+    } catch (error) {
+        console.log(error);
+        if (error.code === "23505") { 
+            return res.status(400).json({ message: "Ingresso já comprado." });
+        }
+            res.status(500).json({ message: "Erro ao comprar ingresso." });
+    }
+};
 
-module.exports = { getAllIngressos, getIngressoById, createIngresso, deleteIngresso, updateIngresso };
+module.exports = { getAllIngressos, getIngressoById, createIngresso, deleteIngresso, updateIngresso, createVenda };
