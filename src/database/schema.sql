@@ -14,4 +14,8 @@ INSERT INTO ingressos (evento, local, data_evento, categoria, preco, quantidade_
     ('Show MC Negao Original', 'Vitrine', '20-04-2025', 'Pista', 100, 34),
     ('Show MC Negao Original', 'Vitrine', '20-04-2025', 'Pista VIP', 200, 76),
     ('Show MC Negao Original', 'Vitrine', '20-04-2025', 'Camarote', 300, 124),
-    ('Show MC Negao Original', 'Vitrine', '20-04-2025', 'Arquibancada', 80, 5);
+    ('Show MC Negao Original', 'Vitrine', '20-04-2025', 'Arquibancada', 80, 5),
+    ('Show MC Tuto', 'Woods', '24-04-2025', 'Pista', 100, 41),
+    ('Show MC Tuto', 'Woods', '24-04-2025', 'Pista VIP', 100, 42),
+    ('Show MC Tuto', 'Woods', '24-04-2025', 'Camarote', 100, 0),
+    ('Show MC Tuto', 'Woods', '24-04-2025', 'Arquibancada', 100, 0),

@@ -1,15 +1,15 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const userRoutes = require(".");
+const ingressoRoutes = require("./src/routes/ingressoRoutes");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", userRoutes);
+app.use("/api", ingressoRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server on na http://localhost:${PORT} bb!`);
+    console.log(`🚀 Server on na geral http://localhost:${PORT}`);
 });
