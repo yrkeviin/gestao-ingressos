@@ -15,6 +15,16 @@ const createIngresso = async (evento, local, data_evento, categoria, preco, quan
         "INSERT INTO ingressos (evento, local, data_evento, categoria, preco, quantidade_disponivel) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
         [evento, local, data_evento, categoria, preco, quantidade_disponivel]
     );
+    if (categoria = "Pista" && preco < 100) {
+        return { error: "Preço minimo atingido." };
+    } else if (categoria = "Pista VIP" && preco < 200) {
+        return { error: "Preço minimo atingido." };
+    } else if (categoria = "Camarote" && preco < 300) {
+        return { error: "Preço minimo atingido." };
+    } else if (categoria = "Arquibancada" && preco < 80) {
+        return { error: "Preço minimo atingido." };
+    }
+
     return result.rows[0];
 };
 

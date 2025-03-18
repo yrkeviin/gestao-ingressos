@@ -29,7 +29,7 @@ const createIngresso = async (req, res) => {
         res.status(201).json(newIngresso);
     } catch (error) {
 	console.log(error);
-        if (error.code === "23505") {
+        if (error.code === "23505") { // Código de erro do PostgreSQL para chave única violada
             return res.status(400).json({ message: "Ingresso já cadastrado." });
         }
         res.status(500).json({ message: "Erro ao criar ingresso." });
