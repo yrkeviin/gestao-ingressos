@@ -29,7 +29,7 @@ const createIngresso = async (req, res) => {
         res.status(201).json(newIngresso);
     } catch (error) {
 	console.log(error);
-        if (error.code === "23505") { // Código de erro do PostgreSQL para chave única violada
+        if (error.code === "23505") {
             return res.status(400).json({ message: "Ingresso já cadastrado." });
         }
         res.status(500).json({ message: "Erro ao criar ingresso." });
@@ -59,21 +59,63 @@ const deleteIngresso = async (req, res) => {
     }
 };
 
-const createVenda = async (req, res) => {
+const vendaIngresso = async (req, res) => {
     try {
-        const { id, quantidade_requerida } = req.body;
-        const newVenda = await ingressoModel.createVenda(id, quantidade_requerida);
-        if (newVenda.error) {
-            return res.status(400).json({ message: newVenda.error });
+        const { id, quantidade, preco } = req.body;
+
+        if (preco === undefined || preco === null) {
+            return res.status(400).json({ erro: "Preço é obrigatório." });
         }
-        res.status(201).json(newVenda);
+
+        if (quantidade <= 0) {
+            return res.status(400).json({ erro: "A quantidade deve ser maior que zero." });
+        }
+
+        const ingresso = await ingressoModel.getIngressoById(id);
+        if (!ingresso) {
+            return res.status(404).json({ erro: "Ingresso não encontrado." });
+        }
+
+        if (ingresso.quantidade_disponivel === 0) {
+            return res.status(400).json({ erro: "Ingressos esgotados." });
+        }
+
+        if (quantidade > ingresso.quantidade_disponivel) {
+            return res.status(400).json({ erro: "Ingressos insuficientes para a venda." });
+        }
+
+        const minPrecos = {
+            Pista: 100,
+            "Pista VIP": 200,
+            Camarote: 300,
+            Arquibancada: 80,
+        };
+
+        if (preco < minPrecos[ingresso.categoria]) {
+            return res.status(400).json({
+                erro: `Preço mínimo para a categoria ${ingresso.categoria} é R$${minPrecos[ingresso.categoria]},00.`,
+            });
+        }
+
+        const novaQuantidade = ingresso.quantidade_disponivel - quantidade;
+        await ingressoModel.updateQuantidade(id, novaQuantidade);
+
+        const precoTotal = (preco * quantidade).toFixed(2);
+        const precoUnitario = preco.toFixed(2);
+
+        res.json({
+            mensagem: "Compra realizada com sucesso!",
+            evento: ingresso.evento,
+            categoria: ingresso.categoria,
+            preco_unitario: precoUnitario,
+            quantidade_comprada: quantidade,
+            preco_total: precoTotal,
+            quantidade_restante: novaQuantidade
+        });
     } catch (error) {
-        console.log(error);
-        if (error.code === "23505") { 
-            return res.status(400).json({ message: "Ingresso já comprado." });
-        }
-            res.status(500).json({ message: "Erro ao comprar ingresso." });
+        console.error(error);
+        res.status(500).json({ message: "Erro ao processar a venda." });
     }
 };
 
-module.exports = { getAllIngressos, getIngressoById, createIngresso, deleteIngresso, updateIngresso, createVenda };
+module.exports = { getAllIngressos, getIngressoById, createIngresso, deleteIngresso, updateIngresso, vendaIngresso };
